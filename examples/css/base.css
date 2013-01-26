@@ -1,0 +1,68 @@
+.headder1{
+    background: #93F;
+    border: solid 1px;
+    height: 70px;
+    width: 30%;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    float: left;
+    text-align: center;
+}
+.headder2{
+    background: #93F;
+    border: solid 1px;
+    height: 70px;
+    width: 69%;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    float: left;
+}
+.maindiv{
+    float: left;
+}
+.title{
+    float: left;
+    margin: 5px;
+    margin-left: 20px;
+}
+.register{
+    float: right;
+    margin: 5px;
+    margin-right: 20px;
+}
+.register:hover{
+    cursor: pointer;
+}
+.profile{
+    float: right;
+    margin: 5px;
+}
+.profile-name{
+    float: left;
+}
+.profile-image{
+    height: 60px;
+    width: 60px;
+    background-size: contain;
+    float: left;
+    margin-right: 5px;
+}
+.thumb{
+    height: 150px;
+    width: 150px;
+    margin: 5px;
+    background-repeat: no-repeat;
+    float: left;
+}
+.thumb-cover{
+    height: 150px;
+    width: 150px;
+    visibility: hidden;
+}
+.thumb:hover .thumb-cover{
+    height: 150px;
+    width: 150px;
+    color: #fff;
+    background-color: rgba(0,0,0,.7);
+    visibility: visible;
+}
