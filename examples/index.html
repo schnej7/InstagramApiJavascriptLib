@@ -7,6 +7,7 @@
   </head>
   <body>
     <div class='headder1'>
+      <select class='headder1-select'></select>
     </div>
     <div class='headder2'>
       <h1 class='title'>MyGram</h1>
@@ -46,48 +47,58 @@
         var access_parameters = {access_token:access_token};
 
         var getRecentMediaCallback = function(data){
-            var maxId = null;
-            var maindiv = $('.maindiv');
-            data = data.data;
-            for( var i = 0; i < data.length; i++ ){
-                if( i == data.length-1 ){
-                    maxId = data[i].id;
-                }
-                var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'"></div>')
-                    .addClass('thumb')
-                    .css('background-image','url('+data[i].images.thumbnail.url+')')
-                    .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
-                    .click( function( element ){
-                      image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
-                    })
-                        .addClass('thumb-cover'));
-                maindiv.append(newThumb);
+          var maxId = null;
+          var maindiv = $('.maindiv');
+          data = data.data;
+          for( var i = 0; i < data.length; i++ ){
+            if( i == data.length-1 ){
+              maxId = data[i].id;
             }
-            if( data.length == 40 ){
-                instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: maxId}, getRecentMediaCallback );
-            }
-          };
+            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'"></div>')
+              .addClass('thumb')
+              .css('background-image','url('+data[i].images.thumbnail.url+')')
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
+              .click( function( element ){
+                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
+              })
+                .addClass('thumb-cover'));
+            maindiv.append(newThumb);
+          }
+          if( data.length == 40 ){
+            instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: maxId}, getRecentMediaCallback );
+          }
+        };
+
+        $('.headder1-select').change( function(){
+          window.location='?uid='+$('.headder1-select option:selected').val();
+        });
 
         if( !!access_token ){
           instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
           if( uid == 'self' ){
             instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
-              $('.headder1').append('<h1>'+data.data.username+'</h1>');
+              console.log( data.data );
+              $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
               $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
               $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
             });
           }
           else{
             instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
+              $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
               $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
               $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
             });
-            instagram.USERS.getUserInfo( access_parameters, {uid: uid}, function(data){
-              $('.headder1').append('<h1>'+data.data.username+'</h1>');
-            });
           }
         }
-        instagram.RELATIONSHIPS.getFollows( access_parameters, {uid:'self'}, function(data){ console.log(data); });
+        instagram.RELATIONSHIPS.getFollows( access_parameters, {uid:'self'}, function(data){
+          data = data.data;
+          for( var i = 0; i < data.length; i++ ){
+            console.log( data );
+            $('.headder1-select').append($('<option>'+data[i].username+'</option>').attr('value', data[i].id));
+          }
+          $('.headder1-select').val(uid);
+        });
       })();
     </script>
   </body>
