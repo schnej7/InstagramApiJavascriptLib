@@ -17,6 +17,7 @@
     <div class="maindiv"></div>
     <script type="text/javascript" src='js/jquery.js'></script>
     <script type="text/javascript" src='js/instagram.js'></script>
+    <script type="text/javascript" src='js/host_detect.js'></script>
     <script type="text/javascript" src='examples/js/bootstrap.js'></script>
     <script type="text/javascript" src='examples/BootstrapAddons/js/image-popover.js'></script>
     <script>
@@ -38,8 +39,10 @@
         if( !access_token ){
           access_token = instagram.AUTHENTICATION.getAccessToken( false );
         }
-        var uri = 'http://localhost/instagram/examples/?redirect=true';
-        var clientId = '94c63c6afce54a438ddec333784fefcd';
+        var uri = host_detect.getUri();
+        var clientId = host_detect.getClientId();
+        //var uri = 'http://localhost/instagram/examples/?redirect=true';
+        //var clientId = '94c63c6afce54a438ddec333784fefcd';
         var register = $('.register')[0]; 
         register.onclick = function(){
           instagram.AUTHENTICATION.register( uri, clientId );
