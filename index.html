@@ -25,6 +25,7 @@
         var access_token = null;
         var qParams = null;
         var uid = null;
+        var tag = null;
         if( !!document.location.search ){
           qParams = document.location.search.split('?')[1].split('&');
           for( var i = 0; i < qParams.length; i++ ){
@@ -33,6 +34,9 @@
             }
             if( qParams[i].match("uid") ){
               uid = qParams[i].replace("uid=", "");
+            }
+            if( qParams[i].match("tag") ){
+              tag = qParams[i].replace("tag=", "");
             }
           }
         }
@@ -52,8 +56,40 @@
         }
         var access_parameters = {access_token:access_token};
 
-        var getFeedCallback = function(data){
+        var getRecentTagsCallback = function(data){
           console.log(data);
+          var maxId = null;
+          var maindiv = $('.maindiv');
+          var pagination = data.pagination;
+          data = data.data;
+          var standard_res_caption = [];
+          for( var i = 0; i < data.length; i++ ){
+            if( i == data.length-1 ){
+              maxId = data[i].id;
+            }
+            standard_res_caption[i] = $('<div></div>')
+              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
+              }
+            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
+              .addClass('thumb')
+              .css('background-image','url('+data[i].images.thumbnail.url+')')
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
+              .click( function( element ){
+                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
+                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
+              })
+                .addClass('thumb-cover'));
+            maindiv.append(newThumb);
+          }
+          if( pagination.next_max_tag_id ){
+            instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag, max_id: pagination.next_max_tag_id}, getRecentTagsCallback );
+          }
+        };
+
+        var getFeedCallback = function(data){
           var maxId = null;
           var maindiv = $('.maindiv');
           data = data.data;
@@ -65,6 +101,9 @@
             standard_res_caption[i] = $('<div></div>')
               .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
+              }
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
@@ -93,6 +132,9 @@
             standard_res_caption[i] = $('<div></div>')
               .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
+              }
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
@@ -114,23 +156,21 @@
         });
 
         if( !!access_token ){
-          if( uid == 'self' ){
+          if( tag ){
+            instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag}, getRecentTagsCallback );
+          }
+          else if( uid == 'self' ){
             instagram.USERS.getFeed( access_parameters, {count: 40}, getFeedCallback );
-            instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
-              $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
-              $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
-              $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
-            });
           }
           else{
             instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
-            instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
-              $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
-              $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
-              $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
-            });
           }
         }
+        instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
+          $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
+          $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
+          $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
+        });
         instagram.RELATIONSHIPS.getFollows( access_parameters, {uid:'self'}, function(data){
           data = data.data;
           for( var i = 0; i < data.length; i++ ){
