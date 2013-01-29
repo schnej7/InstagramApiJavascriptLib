@@ -25,6 +25,9 @@
     margin: 5px;
     margin-left: 20px;
 }
+.title:hover{
+    cursor: pointer;
+}
 .register{
     float: right;
     margin: 5px;

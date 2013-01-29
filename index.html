@@ -36,33 +36,70 @@
             }
           }
         }
+        uid = uid || 'self';
         if( !access_token ){
           access_token = instagram.AUTHENTICATION.getAccessToken( false );
         }
         var uri = host_detect.getUri();
         var clientId = host_detect.getClientId();
-        //var uri = 'http://localhost/instagram/examples/?redirect=true';
-        //var clientId = '94c63c6afce54a438ddec333784fefcd';
         var register = $('.register')[0]; 
         register.onclick = function(){
           instagram.AUTHENTICATION.register( uri, clientId );
         }
+        var title = $('.title')[0];
+        title.onclick = function(){
+          window.location.search='';
+        }
         var access_parameters = {access_token:access_token};
 
-        var getRecentMediaCallback = function(data){
+        var getFeedCallback = function(data){
+          console.log(data);
           var maxId = null;
           var maindiv = $('.maindiv');
           data = data.data;
+          var standard_res_caption = [];
           for( var i = 0; i < data.length; i++ ){
             if( i == data.length-1 ){
               maxId = data[i].id;
             }
-            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'"></div>')
+            standard_res_caption[i] = $('<div></div>')
+              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
               .click( function( element ){
                 image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
+                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
+              })
+                .addClass('thumb-cover'));
+            maindiv.append(newThumb);
+          }
+          if( data.length > 0 ){
+            instagram.USERS.getFeed( access_parameters, {count: 30, max_id: maxId}, getFeedCallback );
+          }
+        };
+
+        var getRecentMediaCallback = function(data){
+          var maxId = null;
+          var maindiv = $('.maindiv');
+          data = data.data;
+          var standard_res_caption = [];
+          for( var i = 0; i < data.length; i++ ){
+            if( i == data.length-1 ){
+              maxId = data[i].id;
+            }
+            standard_res_caption[i] = $('<div></div>')
+              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
+              .addClass('thumb')
+              .css('background-image','url('+data[i].images.thumbnail.url+')')
+              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
+              .click( function( element ){
+                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
+                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
               })
                 .addClass('thumb-cover'));
             maindiv.append(newThumb);
@@ -77,16 +114,16 @@
         });
 
         if( !!access_token ){
-          instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
           if( uid == 'self' ){
+            instagram.USERS.getFeed( access_parameters, {count: 40}, getFeedCallback );
             instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
-              console.log( data.data );
               $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
               $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
               $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
             });
           }
           else{
+            instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
             instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
               $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
               $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
@@ -97,7 +134,6 @@
         instagram.RELATIONSHIPS.getFollows( access_parameters, {uid:'self'}, function(data){
           data = data.data;
           for( var i = 0; i < data.length; i++ ){
-            console.log( data );
             $('.headder1-select').append($('<option>'+data[i].username+'</option>').attr('value', data[i].id));
           }
           $('.headder1-select').val(uid);

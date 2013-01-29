@@ -44,6 +44,19 @@ var instagram = {
             var UID = query_parameters.uid || 'self';
             var ACCESS_TOKEN = access_parameters.access_token || null;
             $.getJSON('https://api.instagram.com/v1/users/'+UID+'/?access_token='+ACCESS_TOKEN+'&callback=?', callback );
+        },
+        getFeed : function( access_parameters, query_parameters, callback ){
+            console.log( query_parameters );
+            var COUNT = query_parameters.count || null;
+            var MIN_ID = query_parameters.min_id || null;
+            var MAX_ID = query_parameters.max_id || null;
+            var ACCESS_TOKEN = access_parameters.access_token || null;
+            var query = 'https://api.instagram.com/v1/users/self/feed/?access_token='+ACCESS_TOKEN;
+            query = (!!COUNT) ? query+'&count='+COUNT : query;
+            query = (!!MIN_ID) ? query+'&min_id='+MIN_ID : query;
+            query = (!!MAX_ID) ? query+'&max_id='+MAX_ID : query;
+            query += '&callback=?';
+            $.getJSON( query, callback );
         }
     },
     RELATIONSHIPS : {
