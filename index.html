@@ -50,6 +50,10 @@
         register.onclick = function(){
           instagram.AUTHENTICATION.register( uri, clientId );
         }
+        var headder1 = $('.headder1');
+        if( tag ){
+          headder1.append($('<div>#'+tag+'</div>'));
+        }
         var title = $('.title')[0];
         title.onclick = function(){
           window.location.search='';
@@ -57,7 +61,6 @@
         var access_parameters = {access_token:access_token};
 
         var getRecentTagsCallback = function(data){
-          console.log(data);
           var maxId = null;
           var maindiv = $('.maindiv');
           var pagination = data.pagination;
@@ -67,12 +70,14 @@
             if( i == data.length-1 ){
               maxId = data[i].id;
             }
+            if( data[i].caption &&  data[i].tags ){
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
+              }
+            }
             standard_res_caption[i] = $('<div></div>')
               .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
-              }
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
@@ -98,12 +103,14 @@
             if( i == data.length-1 ){
               maxId = data[i].id;
             }
+            if( data[i].caption &&  data[i].tags ){
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
+              }
+            }
             standard_res_caption[i] = $('<div></div>')
               .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
-              }
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
@@ -129,12 +136,14 @@
             if( i == data.length-1 ){
               maxId = data[i].id;
             }
+            if( data[i].caption &&  data[i].tags ){
+              for( var j = 0; j < data[i].tags.length; j++ ){
+                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
+              }
+            }
             standard_res_caption[i] = $('<div></div>')
               .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
               .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                standard_res_caption[i] = standard_res_caption[i].append( $('<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>') );
-              }
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
               .addClass('thumb')
               .css('background-image','url('+data[i].images.thumbnail.url+')')
