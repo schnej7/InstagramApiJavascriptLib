@@ -47,6 +47,7 @@
         var uri = host_detect.getUri();
         var clientId = host_detect.getClientId();
         var register = $('.register')[0]; 
+        var max_pic_id = null;
         register.onclick = function(){
           instagram.AUTHENTICATION.register( uri, clientId );
         }
@@ -89,14 +90,25 @@
                 .addClass('thumb-cover'));
             maindiv.append(newThumb);
           }
-          if( pagination.next_max_tag_id ){
+          var doc = $(document);
+          var win = $(window);
+          if( (win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
             instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag, max_id: pagination.next_max_tag_id}, getRecentTagsCallback );
+          }
+          else if( pagination.next_max_id ){
+            max_pic_id = pagination.next_max_tag_id;
+            window.onscroll = my_onscroll;
+          }
+          else{
+            window.onscroll = null;
           }
         };
 
         var getFeedCallback = function(data){
           var maxId = null;
           var maindiv = $('.maindiv');
+          console.log(data);
+          pagination = data.pagination;
           data = data.data;
           var standard_res_caption = [];
           for( var i = 0; i < data.length; i++ ){
@@ -122,14 +134,27 @@
                 .addClass('thumb-cover'));
             maindiv.append(newThumb);
           }
-          if( data.length > 0 ){
-            instagram.USERS.getFeed( access_parameters, {count: 30, max_id: maxId}, getFeedCallback );
+          var doc = $(document);
+          var win = $(window);
+          if( ( win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
+            instagram.USERS.getFeed( access_parameters, {count: 30, max_id: pagination.next_max_id}, getFeedCallback );
+          }
+          else if( pagination.next_max_id ){
+            max_pic_id = pagination.next_max_id;
+            window.onscroll = my_onscroll;
+          }
+          else{
+            window.onscroll = null;
           }
         };
+
+        var lazyLoad = function(){};
+        var lazyLoadCallback = function(){};
 
         var getRecentMediaCallback = function(data){
           var maxId = null;
           var maindiv = $('.maindiv');
+          var pagination = data.pagination;
           data = data.data;
           var standard_res_caption = [];
           for( var i = 0; i < data.length; i++ ){
@@ -155,9 +180,23 @@
                 .addClass('thumb-cover'));
             maindiv.append(newThumb);
           }
+          var doc = $(document);
+          var win = $(window);
+          if( (win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
+            instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: pagination.next_max_id}, getRecentMediaCallback );
+          }
+          else if( pagination.next_max_id ){
+            max_pic_id = pagination.next_max_id;
+            window.onscroll = my_onscroll;
+          }
+          else{
+            window.onscroll = null;
+          }
+          /*
           if( data.length == 40 ){
             instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: maxId}, getRecentMediaCallback );
           }
+          */
         };
 
         $('.headder1-select').change( function(){
@@ -166,13 +205,19 @@
 
         if( !!access_token ){
           if( tag ){
+            lazyLoad = instagram.TAGS.getRecentMedia;
             instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag}, getRecentTagsCallback );
+            lazyLoadCallback = getRecentTagsCallback;
           }
           else if( uid == 'self' ){
+            lazyLoad = instagram.USERS.getFeed;
             instagram.USERS.getFeed( access_parameters, {count: 40}, getFeedCallback );
+            lazyLoadCallback = getFeedCallback;
           }
           else{
+            lazyLoad = instagram.USERS.getRecentMedia;
             instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
+            lazyLoadCallback = getRecentMediaCallback;
           }
         }
         instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
@@ -187,6 +232,19 @@
           }
           $('.headder1-select').val(uid);
         });
+        var my_onscroll = function(){
+          window.onscroll = null;
+          var doc = $(document);
+          var win = $(window);
+          console.log(lazyLoadCallback);
+          if( win.scrollTop() + win.height() + 500 >= doc.height() ){
+            lazyLoad( access_parameters, {count: 40, uid: uid, max_id: max_pic_id}, lazyLoadCallback );
+          }
+          else{
+            window.onscroll = my_onscroll;
+          }
+        };
+        window.onscroll = my_onscroll;
       })();
     </script>
   </body>
