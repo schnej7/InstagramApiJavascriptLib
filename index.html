@@ -15,6 +15,7 @@
       <div class="profile"></div>
     </div>
     <div class="maindiv"></div>
+    <div class="lazyLoadFooter"></div>
     <script type="text/javascript" src='js/jquery.js'></script>
     <script type="text/javascript" src='js/instagram.js'></script>
     <script type="text/javascript" src='js/host_detect.js'></script>
@@ -73,7 +74,7 @@
             }
             if( data[i].caption &&  data[i].tags ){
               for( var j = 0; j < data[i].tags.length; j++ ){
-                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
+                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'gi'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
               }
             }
             standard_res_caption[i] = $('<div></div>')
@@ -101,13 +102,13 @@
           }
           else{
             window.onscroll = null;
+            $('.lazyLoadFooter').remove();
           }
         };
 
         var getFeedCallback = function(data){
           var maxId = null;
           var maindiv = $('.maindiv');
-          console.log(data);
           pagination = data.pagination;
           data = data.data;
           var standard_res_caption = [];
@@ -144,6 +145,8 @@
             window.onscroll = my_onscroll;
           }
           else{
+            console.log('deleted');
+            $('.lazyLoadFooter').remove();
             window.onscroll = null;
           }
         };
@@ -190,13 +193,9 @@
             window.onscroll = my_onscroll;
           }
           else{
+            $('.lazyLoadFooter').remove();
             window.onscroll = null;
           }
-          /*
-          if( data.length == 40 ){
-            instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: maxId}, getRecentMediaCallback );
-          }
-          */
         };
 
         $('.headder1-select').change( function(){
@@ -236,7 +235,6 @@
           window.onscroll = null;
           var doc = $(document);
           var win = $(window);
-          console.log(lazyLoadCallback);
           if( win.scrollTop() + win.height() + 500 >= doc.height() ){
             lazyLoad( access_parameters, {count: 40, uid: uid, max_id: max_pic_id}, lazyLoadCallback );
           }

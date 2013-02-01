@@ -71,3 +71,11 @@
     background-color: rgba(0,0,0,.7);
     visibility: visible;
 }
+.lazyLoadFooter{
+    background-image: url('../images/loading.gif');
+    float: left;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 400px;
+    width: 100%;
+}
