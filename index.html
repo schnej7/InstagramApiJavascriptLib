@@ -25,7 +25,6 @@
     <script>
       (function(){
         myGram.getParameters();
-        myGram.loadHeadder();
         var register = $('.register')[0]; 
         register.onclick = function(){
           instagram.AUTHENTICATION.register( myGram.uri, myGram.clientId );
@@ -35,6 +34,7 @@
           window.location.search='';
         }
 
+        myGram.loadHeadder();
         $('.headder1-select').change( function(){
           window.location='?uid='+$('.headder1-select option:selected').val();
         });

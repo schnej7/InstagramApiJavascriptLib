@@ -1,7 +1,7 @@
 var host_detect = {
     getUri : function(){
         if( document.location.origin.match('localhost') ){
-            return 'http://localhost/instagram/examples/?redirect=true';
+            return 'http://localhost/instagram/?redirect=true';
         }
         else if( document.location.origin.match('github') ){
             return 'http://schnej7.github.com/InstagramApiJavascriptLib/?redirect=true';
