@@ -20,229 +20,26 @@
     <script type="text/javascript" src='js/instagram.js'></script>
     <script type="text/javascript" src='js/host_detect.js'></script>
     <script type="text/javascript" src='examples/js/bootstrap.js'></script>
+    <script type="text/javascript" src='examples/js/myGram.js'></script>
     <script type="text/javascript" src='examples/BootstrapAddons/js/image-popover.js'></script>
     <script>
       (function(){
-        var access_token = null;
-        var qParams = null;
-        var uid = null;
-        var tag = null;
-        if( !!document.location.search ){
-          qParams = document.location.search.split('?')[1].split('&');
-          for( var i = 0; i < qParams.length; i++ ){
-            if( qParams[i].match("redirect=true") ){
-              access_token = instagram.AUTHENTICATION.getAccessToken( true );
-            }
-            if( qParams[i].match("uid") ){
-              uid = qParams[i].replace("uid=", "");
-            }
-            if( qParams[i].match("tag") ){
-              tag = qParams[i].replace("tag=", "");
-            }
-          }
-        }
-        uid = uid || 'self';
-        if( !access_token ){
-          access_token = instagram.AUTHENTICATION.getAccessToken( false );
-        }
-        var uri = host_detect.getUri();
-        var clientId = host_detect.getClientId();
+        myGram.getParameters();
+        myGram.loadHeadder();
         var register = $('.register')[0]; 
-        var max_pic_id = null;
         register.onclick = function(){
-          instagram.AUTHENTICATION.register( uri, clientId );
-        }
-        var headder1 = $('.headder1');
-        if( tag ){
-          headder1.append($('<div>#'+tag+'</div>'));
+          instagram.AUTHENTICATION.register( myGram.uri, myGram.clientId );
         }
         var title = $('.title')[0];
         title.onclick = function(){
           window.location.search='';
         }
-        var access_parameters = {access_token:access_token};
-
-        var getRecentTagsCallback = function(data){
-          var maxId = null;
-          var maindiv = $('.maindiv');
-          var pagination = data.pagination;
-          data = data.data;
-          var standard_res_caption = [];
-          for( var i = 0; i < data.length; i++ ){
-            if( i == data.length-1 ){
-              maxId = data[i].id;
-            }
-            if( data[i].caption &&  data[i].tags ){
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'gi'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
-              }
-            }
-            standard_res_caption[i] = $('<div></div>')
-              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
-              .addClass('thumb')
-              .css('background-image','url('+data[i].images.thumbnail.url+')')
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
-              .click( function( element ){
-                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
-                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
-              })
-                .addClass('thumb-cover'));
-            maindiv.append(newThumb);
-          }
-          var doc = $(document);
-          var win = $(window);
-          if( (win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
-            instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag, max_id: pagination.next_max_tag_id}, getRecentTagsCallback );
-          }
-          else if( pagination.next_max_id ){
-            max_pic_id = pagination.next_max_tag_id;
-            window.onscroll = my_onscroll;
-          }
-          else{
-            window.onscroll = null;
-            $('.lazyLoadFooter').remove();
-          }
-        };
-
-        var getFeedCallback = function(data){
-          var maxId = null;
-          var maindiv = $('.maindiv');
-          pagination = data.pagination;
-          data = data.data;
-          var standard_res_caption = [];
-          for( var i = 0; i < data.length; i++ ){
-            if( i == data.length-1 ){
-              maxId = data[i].id;
-            }
-            if( data[i].caption &&  data[i].tags ){
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
-              }
-            }
-            standard_res_caption[i] = $('<div></div>')
-              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
-              .addClass('thumb')
-              .css('background-image','url('+data[i].images.thumbnail.url+')')
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
-              .click( function( element ){
-                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
-                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
-              })
-                .addClass('thumb-cover'));
-            maindiv.append(newThumb);
-          }
-          var doc = $(document);
-          var win = $(window);
-          if( ( win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
-            instagram.USERS.getFeed( access_parameters, {count: 30, max_id: pagination.next_max_id}, getFeedCallback );
-          }
-          else if( pagination.next_max_id ){
-            max_pic_id = pagination.next_max_id;
-            window.onscroll = my_onscroll;
-          }
-          else{
-            console.log('deleted');
-            $('.lazyLoadFooter').remove();
-            window.onscroll = null;
-          }
-        };
-
-        var lazyLoad = function(){};
-        var lazyLoadCallback = function(){};
-
-        var getRecentMediaCallback = function(data){
-          var maxId = null;
-          var maindiv = $('.maindiv');
-          var pagination = data.pagination;
-          data = data.data;
-          var standard_res_caption = [];
-          for( var i = 0; i < data.length; i++ ){
-            if( i == data.length-1 ){
-              maxId = data[i].id;
-            }
-            if( data[i].caption &&  data[i].tags ){
-              for( var j = 0; j < data[i].tags.length; j++ ){
-                data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'g'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
-              }
-            }
-            standard_res_caption[i] = $('<div></div>')
-              .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-            var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
-              .addClass('thumb')
-              .css('background-image','url('+data[i].images.thumbnail.url+')')
-              .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
-              .click( function( element ){
-                image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
-                $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
-              })
-                .addClass('thumb-cover'));
-            maindiv.append(newThumb);
-          }
-          var doc = $(document);
-          var win = $(window);
-          if( (win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
-            instagram.USERS.getRecentMedia( access_parameters, {uid: uid, count: 40, max_id: pagination.next_max_id}, getRecentMediaCallback );
-          }
-          else if( pagination.next_max_id ){
-            max_pic_id = pagination.next_max_id;
-            window.onscroll = my_onscroll;
-          }
-          else{
-            $('.lazyLoadFooter').remove();
-            window.onscroll = null;
-          }
-        };
 
         $('.headder1-select').change( function(){
           window.location='?uid='+$('.headder1-select option:selected').val();
         });
 
-        if( !!access_token ){
-          if( tag ){
-            lazyLoad = instagram.TAGS.getRecentMedia;
-            instagram.TAGS.getRecentMedia( access_parameters, {tag_name: tag}, getRecentTagsCallback );
-            lazyLoadCallback = getRecentTagsCallback;
-          }
-          else if( uid == 'self' ){
-            lazyLoad = instagram.USERS.getFeed;
-            instagram.USERS.getFeed( access_parameters, {count: 40}, getFeedCallback );
-            lazyLoadCallback = getFeedCallback;
-          }
-          else{
-            lazyLoad = instagram.USERS.getRecentMedia;
-            instagram.USERS.getRecentMedia( access_parameters, {count: 40, uid: uid}, getRecentMediaCallback );
-            lazyLoadCallback = getRecentMediaCallback;
-          }
-        }
-        instagram.USERS.getUserInfo( access_parameters, {uid: 'self'}, function(data){
-          $('.headder1-select').append($('<option>'+data.data.username+'</option>').attr('value', data.data.id));
-          $('.profile').append($('<div></div>').css('background-image','url('+data.data.profile_picture+')').addClass('profile-image'));
-          $('.profile').append($('<div>'+data.data.username+' ('+data.data.full_name+')</div>').addClass('profile-name'));
-        });
-        instagram.RELATIONSHIPS.getFollows( access_parameters, {uid:'self'}, function(data){
-          data = data.data;
-          for( var i = 0; i < data.length; i++ ){
-            $('.headder1-select').append($('<option>'+data[i].username+'</option>').attr('value', data[i].id));
-          }
-          $('.headder1-select').val(uid);
-        });
-        var my_onscroll = function(){
-          window.onscroll = null;
-          var doc = $(document);
-          var win = $(window);
-          if( win.scrollTop() + win.height() + 500 >= doc.height() ){
-            lazyLoad( access_parameters, {count: 40, uid: uid, max_id: max_pic_id}, lazyLoadCallback );
-          }
-          else{
-            window.onscroll = my_onscroll;
-          }
-        };
-        window.onscroll = my_onscroll;
+        window.onscroll = myGram.lazyLoadOnScroll;
       })();
     </script>
   </body>
