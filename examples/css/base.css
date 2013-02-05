@@ -53,19 +53,32 @@
 .thumb{
     height: 150px;
     width: 150px;
-    margin: 5px;
     background-repeat: no-repeat;
     float: left;
 }
+.top{
+    margin: 0 0 6px 0;
+}
+.left{
+    margin: 0 6px 0 0;
+}
+.large{
+    height: 306px;
+    width: 306px;
+    background-repeat: no-repeat;
+    float: left;
+    overflow: hidden;
+    margin: 6px 0 0 6px;
+}
 .thumb-cover{
-    height: 150px;
-    width: 150px;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
     visibility: hidden;
 }
 .thumb:hover .thumb-cover{
-    height: 150px;
-    width: 150px;
+    height: 100%;
+    width: 100%;
     color: #fff;
     overflow: hidden;
     background-color: rgba(0,0,0,.7);

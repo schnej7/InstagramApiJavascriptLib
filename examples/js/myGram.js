@@ -76,16 +76,39 @@ var myGram = {
         });
     },
     getImagesCallback : function( data ){
-        var maxId = null;
         var maindiv = $('.maindiv');
         var pagination = data.pagination;
         data = data.data;
         var standard_res_caption = [];
+        var most_likes = [];
+        var max_large_photos = (data.length % 4);
+        //get images with most likes
+        if( max_large_photos < data.length / 4 ){
+            max_large_photos += 4;
+        }
         for( var i = 0; i < data.length; i++ ){
-            if( i == data.length-1 ){
-                maxId = data[i].id;
+            if( most_likes.length < max_large_photos ){
+                most_likes[i] = {index: i, value: data[i].likes.count};
             }
-            if( data[i].caption &&  data[i].tags ){
+            else{
+                most_likes.sort( function(a, b){
+                    return b.value - a.value;
+                });
+                for( var j = 0; j < most_likes.length; j++ ){
+                    if( most_likes[j].value < data[i].likes.count ){
+                        most_likes[j] = {index: i, value: data[i].likes.count };
+                        break;
+                    }
+                }
+            }
+        }
+        var small_fill = 0;
+        var small_thumb_container = null;
+        for( var i = 0; i < data.length; i++ ){
+            if( small_fill == 0 ){
+                small_thumb_container = $('<div><div>').addClass('large');
+            }
+            if( data[i].caption && data[i].tags ){
                 for( var j = 0; j < data[i].tags.length; j++ ){
                     data[i].caption.text = data[i].caption.text.replace(new RegExp('#'+data[i].tags[j],'gi'), '<a href="?tag='+data[i].tags[j]+'">#'+data[i].tags[j]+' </a>');
                 }
@@ -104,14 +127,40 @@ var myGram = {
                 .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
                 .addClass('thumb')
-                .css('background-image','url('+data[i].images.thumbnail.url+')')
+                .addClass('item')
                 .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
                     .click( function( element ){
                         image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
                         $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
                     })
                     .addClass('thumb-cover'));
-            maindiv.append(newThumb);
+            var is_large = false;
+            for( var j = 0; j < most_likes.length; j++ ){
+                if( i == most_likes[j].index ){
+                    is_large = true;
+                }
+                break;
+            }
+            if( is_large ){
+                newThumb = newThumb.addClass('large')
+                    .css('background-image','url('+data[i].images.low_resolution.url+')');
+                maindiv.append(newThumb);
+            }
+            else{
+                if( small_fill < 2 ){
+                    newThumb = newThumb.addClass('top');
+                }
+                if( small_fill % 2 == 0 ){
+                    newThumb = newThumb.addClass('left');
+                }
+                newThumb = newThumb.css('background-image','url('+data[i].images.thumbnail.url+')');
+                small_thumb_container.append(newThumb);
+                small_fill += 1;
+                if( small_fill == 4 ){
+                    small_fill = 0;
+                    maindiv.append(small_thumb_container);
+                }
+            }
         }
         var doc = $(document);
         var win = $(window);
