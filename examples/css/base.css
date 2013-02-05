@@ -1,94 +1,92 @@
-.headder1{
-    background: #93F;
-    border: solid 1px;
+#header {
+    background: #42799d;
     height: 70px;
-    width: 30%;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    float: left;
-    text-align: center;
+    width: 100%;
+    display: block;
 }
-.headder2{
-    background: #93F;
-    border: solid 1px;
-    height: 70px;
-    width: 69%;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    float: left;
+.maindiv {
+	margin: auto;
 }
-.maindiv{
+.title {
     float: left;
-}
-.title{
-    float: left;
-    margin: 5px;
+    margin: 12px;
     margin-left: 20px;
 }
-.title:hover{
+.title:hover {
     cursor: pointer;
 }
-.register{
+.register {
     float: right;
-    margin: 5px;
+    margin-top: 20px;
     margin-right: 20px;
 }
-.register:hover{
+.register:hover {
     cursor: pointer;
 }
-.profile{
+.profile {
     float: right;
     margin: 5px;
 }
-.profile-name{
+.profile-name {
     float: left;
+    margin-top: 15px;
 }
-.profile-image{
+.profile-image {
     height: 60px;
     width: 60px;
     background-size: contain;
     float: left;
     margin-right: 5px;
 }
-.thumb{
+.thumb {
     height: 150px;
     width: 150px;
-    background-repeat: no-repeat;
     float: left;
 }
-.top{
+.top {
     margin: 0 0 6px 0;
 }
-.left{
+.left {
     margin: 0 6px 0 0;
 }
-.large{
+.large {
     height: 306px;
     width: 306px;
-    background-repeat: no-repeat;
     float: left;
     overflow: hidden;
-    margin: 6px 0 0 6px;
+    margin: 4px;
 }
-.thumb-cover{
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    visibility: hidden;
-}
-.thumb:hover .thumb-cover{
-    height: 100%;
-    width: 100%;
+.thumb-cover {
+	-webkit-font-smoothing: antialiased; /* fix for transition */
     color: #fff;
+    height: 134px;
+    width: 134px;
+	padding: 8px;
     overflow: hidden;
-    background-color: rgba(0,0,0,.7);
-    visibility: visible;
+    background-color: rgba(0,0,0,.8);
+    opacity: 0.0;
+    -webkit-transition: opacity 0.25s ease-in;
 }
-.lazyLoadFooter{
+.thumb.large>.thumb-cover {
+	height: 290px;
+	width: 290px;
+}
+.thumb:hover .thumb-cover {
+    opacity: 1.0;
+}
+.lazyLoadFooter {
     background-image: url('../images/loading.gif');
+    background-size: 100px 100px;
     float: left;
     background-repeat: no-repeat;
     background-position: center center;
-    height: 400px;
+    height: 150px;
     width: 100%;
+}
+a, a:visited {
+	color: #7fc5ff !important;
+	-webkit-transition: color 0.125s;
+}
+a:hover {
+	color: #bfe2ff !important;
 }
