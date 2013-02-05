@@ -71,18 +71,21 @@
     margin: 6px 0 0 6px;
 }
 .thumb-cover{
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    visibility: hidden;
-}
-.thumb:hover .thumb-cover{
-    height: 100%;
-    width: 100%;
     color: #fff;
+    height: 134px;
+    width: 134px;
+	padding: 8px;
     overflow: hidden;
     background-color: rgba(0,0,0,.7);
-    visibility: visible;
+    opacity: 0.0;
+    -webkit-transition: opacity 0.25s;
+}
+.thumb.large>.thumb-cover{
+	height: 290px;
+	width: 290px;
+}
+.thumb:hover .thumb-cover{
+    opacity: 1.0;
 }
 .lazyLoadFooter{
     background-image: url('../images/loading.gif');
