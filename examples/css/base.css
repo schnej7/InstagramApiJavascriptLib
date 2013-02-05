@@ -71,6 +71,7 @@
     margin: 6px 0 0 6px;
 }
 .thumb-cover{
+	-webkit-font-smoothing: antialiased; /* fix for transition */
     color: #fff;
     height: 134px;
     width: 134px;
