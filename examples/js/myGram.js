@@ -164,7 +164,7 @@ var myGram = {
         }
         var doc = $(document);
         var win = $(window);
-        if( (win.scrollTop() + win.height() + 500 >= doc.height() ) && pagination.next_max_id ){
+        if( (win.scrollTop() + win.height() + 1000 >= doc.height() ) && pagination.next_max_id ){
             myGram.query_parameters.max_id = pagination[myGram.paginationField];
             myGram.instagramCall( myGram.access_parameters, myGram.query_parameters, myGram.getImagesCallback );
         }
@@ -181,7 +181,7 @@ var myGram = {
         window.onscroll = null;
         var doc = $(document);
         var win = $(window);
-        if( win.scrollTop() + win.height() + 500 >= doc.height() ){
+        if( win.scrollTop() + win.height() + 1000 >= doc.height() ){
             myGram.instagramCall( myGram.access_parameters, myGram.query_parameters, myGram.getImagesCallback );
         }
         else{
