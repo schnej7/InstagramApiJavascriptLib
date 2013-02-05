@@ -1,4 +1,4 @@
-Licence
+License
 Copyright 2012 Jerry Schneider. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
