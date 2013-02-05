@@ -2,7 +2,7 @@ var image_popover = {
 
     //This function creates a popover for an image
     //It expects an img tag
-    popover: function( element, isUrl ){
+    popover: function( element, isUrl, additional_element ){
         var image = null;
         if( element.tagName && element.tagName == 'IMG' ){
             image = element.src;
@@ -16,14 +16,14 @@ var image_popover = {
         }
 
         if( !document.getElementById( 'image-popover' ) ){
-            this.create( image );
+            this.create( image, additional_element );
         }
         //This prevents the page from scrolling
         return false;
     },
 
     //Helper function that creates the DOM elements for the popover
-    create: function( source ){
+    create: function( source, additional_element ){
         var overlay = document.createElement('div');
         overlay.setAttribute('id', 'image-popover');
         overlay.setAttribute('onClick', 'image_popover.destory()');
@@ -42,6 +42,10 @@ var image_popover = {
         img.setAttribute('id', '__image__');
         img.setAttribute('src', source);
         img_frame.appendChild( img );
+
+        if( additional_element ){
+            img_frame.appendChild( additional_element );
+        }
 
         document.body.appendChild(overlay);
     },
