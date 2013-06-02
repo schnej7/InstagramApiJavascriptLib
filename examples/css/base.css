@@ -1,13 +1,16 @@
 #header {
+    position: fixed;
     background: #42799d;
     height: 70px;
     width: 100%;
     display: block;
+    z-index:10;
 }
 .headder1-select{
     margin-top: 15px;
 }
 .maindiv {
+    padding-top: 70px;
 	margin: auto;
 }
 .title {
