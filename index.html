@@ -38,6 +38,17 @@
         });
 
         window.onscroll = myGram.lazyLoadOnScroll;
+
+        function adjustSize( width ){
+          console.log(width);
+          var newWidth = (width - width % 314);
+          $('.maindiv').width(newWidth);
+        }
+
+        adjustSize($(this).width());
+        $(window).resize(function() {
+          adjustSize($(this).width());
+        });
       })();
     </script>
   </body>
