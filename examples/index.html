@@ -61,7 +61,8 @@
               .click( function( element ){
                 image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
               })
-                .addClass('thumb-cover'));
+                .addClass('thumb-cover')
+              .append($('<div>Some more things</div>'));
             maindiv.append(newThumb);
           }
           if( data.length == 40 ){

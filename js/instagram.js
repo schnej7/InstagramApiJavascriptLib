@@ -79,5 +79,31 @@ var instagram = {
             var query = "https://api.instagram.com/v1/users/"+UID+"/follows?access_token="+ACCESS_TOKEN+"&callback=?";
             $.getJSON(query, callback);
         }
+    },
+    LIKES : {
+        get : function( access_parameters, query_parameters, callback ){
+            var MEDIA_ID = query_parameters.media_id || null;
+            var ACCESS_TOKEN = access_parameters.access_token || null;
+            var query = "https://api.instagram.com/v1/media/"+MEDIA_ID+"/likes?access_token="+ACCESS_TOKEN+"&callback=?";
+            $.getJSON(query, callback); 
+        },
+        post : function( access_parameters, query_parameters, callback ){
+            var MEDIA_ID = query_parameters.media_id || null;
+            var ACCESS_TOKEN = access_parameters.access_token || null;
+            var query = "https://api.instagram.com/v1/media/"+MEDIA_ID+"/likes?access_token="+ACCESS_TOKEN+"&callback=?";
+            $.post(query, callback); 
+        },
+        del : function( access_parameters, query_parameters, callback ){
+            var MEDIA_ID = query_parameters.media_id || null;
+            var ACCESS_TOKEN = access_parameters.access_token || null;
+            var query = "https://api.instagram.com/v1/media/"+MEDIA_ID+"/likes?access_token="+ACCESS_TOKEN+"&callback=?";
+            $.ajax({
+                type: "DELETE",
+                dataType: "jsonp",
+                crossDomain:true,
+                url: query, 
+                success: callback
+            }); 
+        }
     }
 };

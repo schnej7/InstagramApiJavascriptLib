@@ -125,15 +125,48 @@ var myGram = {
                 .append($('<div>'+likes+'</div>'))
                 .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
                 .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
+            console.log(data[i]);
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
+                .attr('media-id', data[i].id)
                 .addClass('thumb')
                 .addClass('item')
-                .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
+                .addClass('user-has-liked-'+data[i].user_has_liked)
+                .append($('<div></div>')
                     .click( function( element ){
                         image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
                         $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
                     })
-                    .addClass('thumb-cover'));
+                    .addClass('thumb-cover')
+                    .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
+                        .addClass('caption')
+                        .click( function( element ){
+                            element.stopPropagation();
+                            image_popover.popover( element.srcElement.parentNode.parentNode.attributes['standard_resolution'].nodeValue, true );
+                            $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.parentNode.attributes['pos'].nodeValue] );
+                        }))
+                    .append($('<div>&hearts;</div>')
+                        .addClass('likeButton')
+                        .click( function( element ){
+                            element.stopPropagation();
+                            var e_parent = $(element.target).parent().parent();
+                            console.log(e_parent);
+                            console.log(e_parent.attr('media-id'));
+                            if( e_parent.hasClass('user-has-liked-false') ){
+                                myGram.query_parameters.media_id = e_parent.attr('media-id');
+                                instagram.LIKES.post(myGram.access_parameters, myGram.query_parameters, function(){} );
+                                e_parent.addClass('user-has-liked-true');
+                                e_parent.removeClass('user-has-liked-false');
+                            }
+                            else{
+                                /*
+                                myGram.query_parameters.media_id = e_parent.attr('media-id');
+                                instagram.LIKES.del(myGram.access_parameters, myGram.query_parameters, function(){} );
+                                e_parent.addClass('user-has-liked-false');
+                                e_parent.removeClass('user-has-liked-true');
+                                */
+                            }
+                        })
+                    ));
             var is_large = false;
             for( var j = 0; j < most_likes.length; j++ ){
                 if( i == most_likes[j].index ){

@@ -53,7 +53,6 @@
     height: 306px;
     width: 306px;
     float: left;
-    overflow: hidden;
     margin: 4px;
 }
 .thumb-cover {
@@ -62,7 +61,6 @@
     height: 134px;
     width: 134px;
 	padding: 8px;
-    overflow: hidden;
     background-color: rgba(0,0,0,.8);
     opacity: 0.0;
     -webkit-transition: opacity 0.25s ease-in;
@@ -71,8 +69,33 @@
 	height: 290px;
 	width: 290px;
 }
+.user-has-liked-false{
+    box-shadow: 2px 2px 5px #000;
+}
+.user-has-liked-true{
+    box-shadow: 2px 2px 5px #f33;
+}
+.user-has-liked-true>.thumb-cover>.likeButton{
+    color: #f33;
+}
+.caption {
+    overflow: hidden;
+	height: 6.4em;
+    line-height: 1.6em;
+}
+.large>.thumb-cover>.caption {
+	height: 17.6em;
+}
 .thumb:hover .thumb-cover {
     opacity: 1.0;
+}
+.likeButton {
+    position: relative;
+    font-size: 3em;
+    margin-top: .4em;
+    cursor: pointer;
+    color: #fff;
+    display: inline-block;
 }
 .lazyLoadFooter {
     background-image: url('../images/loading.gif');
