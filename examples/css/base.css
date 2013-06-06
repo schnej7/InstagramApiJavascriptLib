@@ -1,10 +1,26 @@
 #header {
-    position: fixed;
+    position: absolute;
     background: #42799d;
     height: 70px;
     width: 100%;
     display: block;
     z-index:10;
+}
+.fadeHead{
+    z-index: -1;
+    position: fixed;
+    width: 100%;
+    height: 400px;
+    top: 70px;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#42799d), to(#ffffff));
+}
+.headderBack{
+    background: #42799d;
+    position: fixed;
+    height: 70px;
+    width: 100%;
+    display: block;
+    z-index: -1;
 }
 .headder1-select{
     margin-top: 15px;
