@@ -125,7 +125,6 @@ var myGram = {
                 .append($('<div>'+likes+'</div>'))
                 .append($('<a>'+data[i].user.username+'</a>').attr('href', '?uid='+data[i].user.id))
                 .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>'));
-            console.log(data[i]);
             var newThumb = $('<div standard_resolution="'+data[i].images.standard_resolution.url+'" pos="'+i+'"></div>')
                 .attr('media-id', data[i].id)
                 .addClass('thumb')
@@ -149,8 +148,6 @@ var myGram = {
                         .click( function( element ){
                             element.stopPropagation();
                             var e_parent = $(element.target).parent().parent();
-                            console.log(e_parent);
-                            console.log(e_parent.attr('media-id'));
                             if( e_parent.hasClass('user-has-liked-false') ){
                                 myGram.query_parameters.media_id = e_parent.attr('media-id');
                                 instagram.LIKES.post(myGram.access_parameters, myGram.query_parameters, function(){} );

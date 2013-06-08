@@ -46,7 +46,6 @@ var instagram = {
             $.getJSON('https://api.instagram.com/v1/users/'+UID+'/?access_token='+ACCESS_TOKEN+'&callback=?', callback );
         },
         getFeed : function( access_parameters, query_parameters, callback ){
-            console.log( query_parameters );
             var COUNT = query_parameters.count || null;
             var MIN_ID = query_parameters.min_id || null;
             var MAX_ID = query_parameters.max_id || null;

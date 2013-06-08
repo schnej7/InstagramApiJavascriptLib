@@ -7,15 +7,15 @@
   </head>
   <body>
     <div id='header'>
-      <select class='headder1-select'></select>
+      <select id='headder-select' class='headder1-select loadLater'></select>
       <h1 class='title'>MyGram</h1>
       <div class="register">Log in</div>
       <div class="profile"></div>
     </div>
-    <div class="headderBack"></div>
-    <div class="fadeHead"></div>
-    <div class="maindiv a_container"></div>
-    <div class="lazyLoadFooter"></div>
+    <div class="maindiv a_container">
+      <div id="login-dialogue" class="login-dialogue loadLater">Log in to see your photos</div>
+    </div>
+    <div id="lazyLoadFooter" class="lazyLoadFooter loadLater"></div>
     <script type="text/javascript" src='js/jquery.js'></script>
     <script type="text/javascript" src='js/instagram.js'></script>
     <script type="text/javascript" src='js/host_detect.js'></script>
@@ -25,9 +25,21 @@
     <script>
       (function(){
         myGram.getParameters();
-        var register = $('.register')[0]; 
+        var register = $('#login-dialogue')[0];
         register.onclick = function(){
           instagram.AUTHENTICATION.register( myGram.uri, myGram.clientId );
+        }
+        register = $('.register')[0];
+        register.onclick = function(){
+          instagram.AUTHENTICATION.register( myGram.uri, myGram.clientId );
+        }
+        if(!myGram.access_parameters){
+          $('.login-dialogue').removeClass('loadLater');
+        }
+        else{
+          $('.lazyLoadFooter').removeClass('loadLater');
+          $('.headder1-select').removeClass('loadLater');
+          console.log($('.headder-select'));
         }
         var title = $('.title')[0];
         title.onclick = function(){
@@ -42,7 +54,6 @@
         window.onscroll = myGram.lazyLoadOnScroll;
 
         function adjustSize( width ){
-          console.log(width);
           var newWidth = (width - width % 314);
           $('.maindiv').width(newWidth);
         }
