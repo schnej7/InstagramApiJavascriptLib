@@ -88,6 +88,7 @@ body{
     margin-top: 5px;
 }
 .profile-name {
+    color: #fff;
     display: inline-block;
     position: absolute;
     padding: 5px;
