@@ -1,3 +1,7 @@
+a.title{
+    color: #fff !important;
+    -webkit-transition: none;
+}
 body{
     background-color: #ddd !important;
 }
@@ -24,6 +28,13 @@ body{
 .headder1-select:hover {
     cursor: pointer;
 }
+.main-img{
+    box-shadow: 0 0 10px #000;
+    border-radius: 7px;
+}
+.maindiv.single-picture{
+    text-align: center;
+}
 .maindiv {
     padding-top: 80px;
 	margin: auto;
@@ -33,6 +44,12 @@ body{
     display: inline-block;
     margin: 12px;
     margin-left: 20px;
+    font-size: 38.5px;
+    line-height: 40px;
+    font-family: inherit;
+    font-weight: bold;
+    color: #fff;
+    text-rendering: optimizelegibility;
 }
 .title:hover {
     cursor: pointer;

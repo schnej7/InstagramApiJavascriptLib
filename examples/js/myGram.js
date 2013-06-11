@@ -12,6 +12,25 @@ var myGram = {
     access_parameters : null,
     lazyLoad : function(){},
     instagramCall : function(){},
+    loadImage : function(){
+        var maindiv = $('.maindiv');
+        if( !!document.location.search ){
+            var qParams = document.location.search.split('?')[1].split('&');
+            for( var i = 0; i < qParams.length; i++ ){
+                if( qParams[i].match("id") ){
+                    myGram.query_parameters['media-id'] = qParams[i].replace("id=", "");
+                }
+                if( qParams[i].match("url") ){
+                    maindiv.append($('<img class="main-img" src="'+decodeURIComponent(qParams[i].replace("url=",""))+'"></img>'));
+                }
+            }
+        }
+    },
+    getAccessParameters : function(){
+        myGram.uri = host_detect.getUri();
+        myGram.clientId = host_detect.getClientId();
+        myGram.access_parameters = {access_token:instagram.AUTHENTICATION.getAccessToken( false )};
+    },
     getParameters : function(){
         var access_token = null;
         if( !!document.location.search ){
@@ -105,6 +124,7 @@ var myGram = {
         var small_fill = 0;
         var small_thumb_container = null;
         for( var i = 0; i < data.length; i++ ){
+            console.log(data[i].id);
             if( small_fill == 0 ){
                 small_thumb_container = $('<div><div>').addClass('large');
             }
@@ -132,17 +152,16 @@ var myGram = {
                 .addClass('user-has-liked-'+data[i].user_has_liked)
                 .append($('<div></div>')
                     .click( function( element ){
-                        image_popover.popover( element.srcElement.parentNode.attributes['standard_resolution'].nodeValue, true );
-                        $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.attributes['pos'].nodeValue] );
+                        var myThumb = $(this);
+                        while( !myThumb.attr('standard_resolution') ){
+                            myThumb = myThumb.parent();
+                        }
+                        image_popover.popover( myThumb.attr('standard_resolution'), true, null, myThumb.attr('media-id') );
+                        $('#image-frame').append( standard_res_caption[myThumb.attr('pos')] );
                     })
                     .addClass('thumb-cover')
                     .append($('<div>'+(data[i].caption&&data[i].caption.text||'')+'</div>')
-                        .addClass('caption')
-                        .click( function( element ){
-                            element.stopPropagation();
-                            image_popover.popover( element.srcElement.parentNode.parentNode.attributes['standard_resolution'].nodeValue, true );
-                            $('#image-frame').append( standard_res_caption[element.srcElement.parentNode.parentNode.attributes['pos'].nodeValue] );
-                        }))
+                        .addClass('caption'))
                     .append($('<div>&hearts;</div>')
                         .addClass('likeButton')
                         .click( function( element ){
@@ -156,6 +175,7 @@ var myGram = {
                             }
                             else{
                                 /*
+                                 * Unlike things... somehow
                                 myGram.query_parameters.media_id = e_parent.attr('media-id');
                                 instagram.LIKES.del(myGram.access_parameters, myGram.query_parameters, function(){} );
                                 e_parent.addClass('user-has-liked-false');

@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="examples/images/favicon.ico">
-    <link rel="stylesheet" href="examples/css/base.css">
-    <link rel="stylesheet" href="examples/css/bootstrap.css">
-    <link rel="stylesheet" href="examples/BootstrapAddons/css/image_popover.css">
+    <link rel="icon" type="image/png" href="/examples/images/favicon.ico">
+    <link rel="stylesheet" href="/examples/css/base.css">
+    <link rel="stylesheet" href="/examples/css/bootstrap.css">
+    <link rel="stylesheet" href="/examples/BootstrapAddons/css/image_popover.css">
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -18,24 +18,24 @@
   </head>
   <body>
     <div id='header'>
-      <select id='headder-select' class='headder1-select loadLater'><option id="null">--following--</option></select>
-      <h1 class='title'>MyGram</h1>
+      <select id='headder-select' class='headder1-select loadLater'><option value="null">--following--</option></select>
+      <h2 id="title" class='title'>MyGram</h2>
       <div class="register">Log in</div>
       <div class="profile"></div>
     </div>
-    <div class="maindiv a_container">
+    <div class="maindiv single-picture">
       <div id="login-dialogue" class="login-dialogue loadLater">Log in to see your photos</div>
     </div>
-    <div id="lazyLoadFooter" class="lazyLoadFooter loadLater"></div>
-    <script type="text/javascript" src='js/jquery.js'></script>
-    <script type="text/javascript" src='js/instagram.js'></script>
-    <script type="text/javascript" src='js/host_detect.js'></script>
-    <script type="text/javascript" src='examples/js/bootstrap.js'></script>
-    <script type="text/javascript" src='examples/js/myGram.js'></script>
-    <script type="text/javascript" src='examples/BootstrapAddons/js/image-popover.js'></script>
+    <script type="text/javascript" src='/js/jquery.js'></script>
+    <script type="text/javascript" src='/js/instagram.js'></script>
+    <script type="text/javascript" src='/js/host_detect.js'></script>
+    <script type="text/javascript" src='/examples/js/bootstrap.js'></script>
+    <script type="text/javascript" src='/examples/js/myGram.js'></script>
+    <script type="text/javascript" src='/examples/BootstrapAddons/js/image-popover.js'></script>
     <script>
       (function(){
-        myGram.getParameters();
+        myGram.getAccessParameters();
+        myGram.loadImage();
         var register = $('#login-dialogue')[0];
         register.onclick = function(){
           instagram.AUTHENTICATION.register( myGram.uri, myGram.clientId );
@@ -50,7 +50,6 @@
         else{
           $('.lazyLoadFooter').removeClass('loadLater');
           $('.headder1-select').removeClass('loadLater');
-          console.log($('.headder-select'));
         }
         var title = $('.title')[0];
         title.onclick = function(){
@@ -62,17 +61,6 @@
           window.location='?uid='+$('.headder1-select option:selected').val();
         });
 
-        window.onscroll = myGram.lazyLoadOnScroll;
-
-        function adjustSize( width ){
-          var newWidth = (width - width % 314);
-          $('.maindiv').width(newWidth);
-        }
-
-        adjustSize($(this).width());
-        $(window).resize(function() {
-          adjustSize($(this).width());
-        });
       })();
     </script>
   </body>
